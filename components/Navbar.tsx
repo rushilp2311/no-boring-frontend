@@ -18,17 +18,21 @@ const Navbar = () => {
       </div>
 
       <div className="flex">
-        <Link href="/summary">
+        <Link href="/">
           <Button variant="link">Summarizer</Button>
         </Link>
         <Button variant="link">Thumbnail Generator</Button>
       </div>
 
       <div className="flex flex-row items-center">
-        <Button variant="ghost" className="mr-3">
-          Login
-        </Button>
-        <Button>Sign Up</Button>
+        <Link href="/login">
+          <Button variant="ghost" className="mr-3">
+            Login
+          </Button>
+        </Link>
+        <Link href="/signup">
+          <Button>Sign Up</Button>
+        </Link>
       </div>
     </div>
   );
