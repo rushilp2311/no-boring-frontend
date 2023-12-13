@@ -1,20 +1,46 @@
+"use client";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-
+import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
 import { UserAuthForm } from "@/components/user-auth-form";
-
-export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Authentication forms built using the components.",
-};
+import { signIn } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const onSubmit = async (email: string, password: string) => {
+    setIsLoading(true);
+    // @ts-ignore
+    const { error } = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (error) {
+      console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Incorrect Credentials",
+        description: error,
+      });
+    } else {
+      router.push("/");
+    }
+
+    setIsLoading(false);
+  };
+
   return (
     <>
-      <div className="container relative hidden h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative h-full flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href="/signup"
           className={cn("absolute right-4 top-4 md:right-8 md:top-8")}
@@ -43,10 +69,14 @@ export default function Login() {
                 Login to your account
               </h1>
               <p className="text-sm text-muted-foreground">
-                Use your Google account to login
+                Use your email to login
               </p>
             </div>
-            <UserAuthForm />
+            <UserAuthForm
+              formType="LogIn"
+              onSubmit={onSubmit}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>

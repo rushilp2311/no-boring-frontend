@@ -1,20 +1,48 @@
-import { Metadata } from "next";
+"use client";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
 import { UserAuthForm } from "@/components/user-auth-form";
-
-export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Authentication forms built using the components.",
-};
+import { useToast } from "@/components/ui/use-toast";
 
 export default function SignUp() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const onSubmit = (email: string, password: string) => {
+    setIsLoading(true);
+    fetch("/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    }).then(async (res) => {
+      if (res.status === 200) {
+        toast({
+          title: "Account Created",
+          description: "Redirecting to login...",
+        });
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      } else {
+        console.log(res);
+      }
+      setIsLoading(false);
+    });
+  };
+
   return (
     <>
-      <div className="container relative hidden h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container relative h-full flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href="/login"
           className={cn("absolute right-4 top-4 md:right-8 md:top-8")}
@@ -43,10 +71,14 @@ export default function SignUp() {
                 Create an account
               </h1>
               <p className="text-sm text-muted-foreground">
-                Use your Google account to sign up
+                Use your email to sign up
               </p>
             </div>
-            <UserAuthForm />
+            <UserAuthForm
+              formType="Sign Up"
+              onSubmit={onSubmit}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>
