@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { getServerSession } from "next-auth";
-import SessionProvider from "@/components/SessionProvider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
@@ -14,28 +13,25 @@ export const metadata: Metadata = {
   description: "MindsDB Hackathon",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
   return (
-    <html lang="en" className="h-full w-full">
-      <body className={cn(GeistSans.className, "h-full w-full")}>
-        <SessionProvider session={session}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <SpeedInsights />
-            {children}
-            <Toaster />
-            <Analytics />
-          </ThemeProvider>
-        </SessionProvider>
+    <html lang="en">
+      <body className={cn(GeistSans.className)}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SpeedInsights />
+          {children}
+          <Toaster />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );
